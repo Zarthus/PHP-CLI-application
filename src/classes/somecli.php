@@ -9,7 +9,9 @@ class SomeCLI extends CLIA {
 	 *
 	 * @throws Exception if not running from command line interface.
 	 */
-	public function __construct($register_initial) {
+	public function __construct($register_initial = true) {
+		parent::__construct($register_initial);
+		
 		if ($register_initial) {
 			$this->registerCommand('printone', 'prints "one" to the terminal', 'printone');
 		}
@@ -21,5 +23,21 @@ class SomeCLI extends CLIA {
 	 */
 	public function cmd_printone() {
 		$this->println("one");
+	}
+	
+	/**
+	 * Override getAppname and getAppVersion so the proper name/versions are displayed.
+	 *
+	 * @return string
+	 */
+	public function getAppName() {
+		return self::APP_NAME;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getAppVersion() {
+		return self::APP_VERSION;
 	}
 }

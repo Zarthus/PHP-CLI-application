@@ -1,6 +1,6 @@
 <?php
 
-class CLI {
+class CLIA {
 	const EXIT_CODE_OK = 0;
 	const EXIT_CODE_NOTCLI = 1;
 	const EXIT_CODE_NO_COMMAND = 2;
@@ -106,7 +106,7 @@ class CLI {
 			$this->args = null;
 			$this->code = self::EXIT_CODE_NO_COMMAND;
 		} else {
-			$this->command = trim($this->argv[1]);
+			$this->command = strtolower(trim($this->argv[1]));
 			$this->args = array_slice($this->argv, 2, $this->argc);
 			$this->code = self::EXIT_CODE_OK;
 		}
@@ -133,6 +133,7 @@ class CLI {
 	 * @throws Exception if registering duplicate commands
 	 */
 	public function registerCommand($command, $description, $handler, $hidden = false) {
+		$command = strtolower($command);
 		$handleCmd = 'cmd_' . ltrim($handler, 'cmd_');
 
 		if (method_exists($this, $handleCmd)) {
@@ -155,6 +156,8 @@ class CLI {
 	 * @return bool
 	 */
 	public function registerOption($command, $opts, array $longopts) {
+		$command = strtolower($command);
+
 		if ($this->isCommand($command) && !$this->isOption($command)) {
 			$this->options[$command] = ['command' => $command, 'opts' => $opts, 'longopts' => $longopts];
 			return true;
@@ -231,11 +234,14 @@ class CLI {
 			} else {
 				$this->println('Supported commands: ');
 
-				foreach ($this->commands as $command) {
+				$_commands = $this->commands;
+				asort($_commands);
+				foreach ($_commands as $command) {
 					if ($command['hidden'])
 						continue;
 
-					$tabsize = str_repeat("\t", 4 - ((int)(strlen($command['command']) / 8)));
+					$len = (int)((strlen($command['command']) + 2) / 8);
+					$tabsize = str_repeat("\t", 4 - $len);
 					$this->println('  ' . $command['command'] . $tabsize . $command['description']);
 				}
 			}
@@ -246,7 +252,9 @@ class CLI {
 			} else {
 				$this->println('Supported options: ');
 
-				foreach ($this->options as $option) {
+				$_options = $this->options;
+				asort($_options);
+				foreach ($_options as $option) {
 					$opts = [];
 
 					for ($i = 0; $i < strlen($option['opts']); $i++) {
@@ -255,7 +263,8 @@ class CLI {
 
 					$o = '-' . implode(', -', $opts) . ', --' . implode(', --', $option['longopts']);
 
-					$tabsize = str_repeat("\t", 4 - ((int)(strlen($o) / 8)));
+					$len = (int)((strlen($o) + 2) / 8);
+					$tabsize = str_repeat("\t", 4 - $len);
 					$description = $this->commands[$option['command']]['description'];
 
 					$this->println('  ' . $o . $tabsize . $description);
@@ -325,6 +334,8 @@ class CLI {
 	 * @return bool
 	 */
 	public function isCommand($command) {
+		$command = strtolower($command);
+
 		return array_key_exists($command, $this->commands);
 	}
 
@@ -334,6 +345,8 @@ class CLI {
 	 * @return bool
 	 */
 	public function isOption($option) {
+		$option = strtolower($option);
+
 		return array_key_exists($option, $this->options);
 	}
 
@@ -345,6 +358,8 @@ class CLI {
 	 * @return bool
 	 */
 	public function isOptionArg($option) {
+		$option = strtolower($option);
+
 		if (substr($option, 0, 1) == '-') {
 
 			$opt = ltrim($option, '-');
@@ -359,6 +374,8 @@ class CLI {
 	}
 
 	/**
+	 * You should override this method in your own application.
+	 *
 	 * @return string
 	 */
 	public function getAppName() {
@@ -366,6 +383,8 @@ class CLI {
 	}
 
 	/**
+	 * You should override this method in your own application.
+	 *
 	 * @return string
 	 */
 	public function getAppVersion() {

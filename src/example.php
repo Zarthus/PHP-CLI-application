@@ -10,7 +10,7 @@ include('classes/clia.php');
 /**
  * Create a new CLI application.
  */
-$cli = new CLI();
+$cli = new CLIA();
 
 /**
  * Run the CLI with your own parameters.
