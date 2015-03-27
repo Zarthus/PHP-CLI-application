@@ -6,7 +6,7 @@ class CLIA {
 	const EXIT_CODE_NO_COMMAND = 2;
 	const EXIT_CODE_CANNOT_EXEC = 3;
 	const EXIT_CODE_NO_DB = 4;
-	
+
 	public static $APP_NAME = 'Core';
 	public static $APP_VERSION = '0.1';
 
@@ -134,7 +134,7 @@ class CLIA {
 	 */
 	public function registerCommand($command, $description, $handler, $hidden = false) {
 		$command = strtolower($command);
-		$handleCmd = 'cmd_' . ltrim($handler, 'cmd_');
+		$handleCmd = 'cmd_' . str_replace('cmd_', '', $handler);
 
 		if (method_exists($this, $handleCmd)) {
 			if (!$this->isCommand($command)) {
@@ -498,7 +498,7 @@ class CLIA {
 			return false;
 
 
-		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' < ' . $file;
+		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' -D' . $this->db_name . ' < ' . $file;
 		exec($command, $output, $return);
 
 		if ($this->verbose) {
