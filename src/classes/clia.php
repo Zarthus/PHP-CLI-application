@@ -216,11 +216,14 @@ class CLIA {
 	 * exits the script.
 	 */
 	public function shutdown() {
-		$this->newline();
 
 		if ($this->code == self::EXIT_CODE_OK) {
-			$this->printverbose("No errors occured. Exiting cleanly..");
+			if ($this->verbose) {
+				$this->newline();
+				$this->printverbose("No errors occured. Exiting cleanly..");
+			}
 		} else {
+			$this->newline();
 			$this->println("Errors occured. Exit code: " . $this->code);
 		}
 
