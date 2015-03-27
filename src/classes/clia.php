@@ -302,12 +302,18 @@ class CLIA {
 	}
 
 	/**
+	 * @param string $message print message to terminal
+	 */
+	public function prnt($message) {
+		if (!$this->isQuiet())
+			echo $message;
+	}
+
+	/**
 	 * @param string $message
 	 */
 	public function println($message) {
-		if (!$this->isQuiet())
-			echo $message;
-
+		$this->prnt($message);
 		$this->newline();
 	}
 
