@@ -3,10 +3,11 @@
 class CLIA {
 	const EXIT_CODE_OK = 0;
 	const EXIT_CODE_NOTCLI = 1;
-	const EXIT_CODE_NO_COMMAND = 2;
-	const EXIT_CODE_CANNOT_EXEC = 3;
-	const EXIT_CODE_NO_DB = 4;
-
+	const EXIT_CODE_CMD_NOT_SUCCESS = 2;
+	const EXIT_CODE_NO_COMMAND = 3;
+	const EXIT_CODE_CANNOT_EXEC = 4;
+	const EXIT_CODE_NO_DB = 5;
+	
 	public static $APP_NAME = 'Core';
 	public static $APP_VERSION = '0.1';
 
@@ -174,6 +175,15 @@ class CLIA {
 	public function run($allow_rerun = false) {
 		if ($this->app_run && !$allow_rerun)
 			throw new Exception("The application has already ran before. Cannot run again.");
+
+		if ($this->command !== null && substr($this->command, 0, 1) == '-') {
+			foreach ($this->argv as $arg) {
+				if ($this->isCommand($arg)) {
+					$this->command = $arg;
+					break;
+				}
+			}
+		}
 
 		$this->app_run = true;
 		$optionarg = $this->isOptionArg($this->command);
@@ -496,15 +506,14 @@ class CLIA {
 	 * Import an SQL file.
 	 *
 	 * @param string $file
-	 *
-	 * @return bool
 	 */
 	protected function importSQL($file) {
-		if ($this->requireDB() === false)
-			return false;
+		if ($this->requireDB() === false) {
+			$this->code = self::EXIT_CODE_CMD_NOT_SUCCESS;
+			return;
+		}
 
-
-		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' -D' . $this->db_name . ' < ' . $file;
+		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' < ' . $file;
 		exec($command, $output, $return);
 
 		if ($this->verbose) {
@@ -516,17 +525,19 @@ class CLIA {
 		$this->newline();
 		$this->println('Imported SQL: ' . $file);
 
-		return $return;
+		if ($return != 0) {
+			$this->code = self::EXIT_CODE_CMD_NOT_SUCCESS;
+		}
 	}
 
 	/**
 	 * @param string $query
-	 *
-	 * @return bool
 	 */
 	protected function sql($query) {
-		if ($this->requireDB() === false)
-			return false;
+		if ($this->requireDB() === false) {
+			$this->code = self::EXIT_CODE_CMD_NOT_SUCCESS;
+			return;
+		}
 
 		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' -D' . $this->db_name .
 			' --execute="' . str_replace('"', '\"', $query) . '"';
@@ -541,7 +552,9 @@ class CLIA {
 		$this->newline();
 		$this->println('Executed Query: ' . $query);
 
-		return $return;
+		if ($return != 0) {
+			$this->code = self::EXIT_CODE_CMD_NOT_SUCCESS;
+		}
 	}
 
 	/**
