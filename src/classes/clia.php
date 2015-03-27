@@ -263,6 +263,12 @@ class CLIA {
 				$this->println('Supported options: ');
 
 				$_options = $this->options;
+
+				foreach ($_options as $key => $value) {
+					$_options[$key]['opts'] = str_replace(':', '', $_options[$key]['opts']);
+					$_options[$key]['longopts'] = str_replace(':', '', $_options[$key]['longopts']);
+				}
+
 				asort($_options);
 				foreach ($_options as $option) {
 					$opts = [];
