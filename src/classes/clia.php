@@ -514,6 +514,31 @@ class CLIA {
 	}
 
 	/**
+	 * @param string $query
+	 *
+	 * @return bool
+	 */
+	protected function sql($query) {
+		if ($this->requireDB() === false)
+			return false;
+
+		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' -D' . $this->db_name .
+			' --execute="' . str_replace('"', '\"', $query) . '"';
+		exec($command, $output, $return);
+
+		if ($this->verbose) {
+			foreach ($output as $o) {
+				$this->println($o);
+			}
+		}
+
+		$this->newline();
+		$this->println('Executed Query: ' . $query);
+
+		return $return;
+	}
+
+	/**
 	 * Check is setDB was called prior to using SQL related methods.
 	 *
 	 * @return bool
