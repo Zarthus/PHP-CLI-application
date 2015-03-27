@@ -246,6 +246,7 @@ class CLIA {
 
 				$_commands = $this->commands;
 				asort($_commands);
+
 				foreach ($_commands as $command) {
 					if ($command['hidden'])
 						continue;
@@ -301,7 +302,7 @@ class CLIA {
 	}
 
 	/**
-	 * Default command : turn quiet on
+	 * Default command: turn quiet on
 	 *
 	 * (if verbose is set, this takes precedence)
 	 */
@@ -524,8 +525,10 @@ class CLIA {
 		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' < ' . $file;
 		exec($command, $output, $return);
 
-		$this->newline();
-		$this->println('Imported SQL: ' . $file);
+		if ($this->verbose) {
+			$this->newline();
+			$this->println('Imported file: ' . $file);
+		}
 
 		if ($return != 0) {
 			$this->code = self::EXIT_CODE_CMD_NOT_SUCCESS;
@@ -549,8 +552,10 @@ class CLIA {
 			' --execute="' . str_replace('"', '\"', $query) . '"';
 		exec($command, $output, $return);
 
-		$this->newline();
-		$this->println('Executed Query: ' . $query);
+		if ($this->verbose) {
+			$this->newline();
+			$this->println('Executed Query: ' . $query);
+		}
 
 		if ($return != 0) {
 			$this->code = self::EXIT_CODE_CMD_NOT_SUCCESS;
