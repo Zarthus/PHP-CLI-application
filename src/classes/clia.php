@@ -7,8 +7,8 @@ class CLIA {
 	const EXIT_CODE_CANNOT_EXEC = 3;
 	const EXIT_CODE_NO_DB = 4;
 	
-	const APP_NAME = 'Core';
-	const APP_VERSION = '0.1';
+	public static $APP_NAME = 'Core';
+	public static $APP_VERSION = '0.1';
 
 	/**
 	 * @var string
@@ -222,7 +222,7 @@ class CLIA {
 	 * default command: display help
 	 */
 	public function cmd_help() {
-		$this->println($this->getAppName() . ' CLI v' . $this->getAppVersion());
+		$this->println(static::$APP_NAME . ' CLI v' . static::$APP_VERSION);
 
 		if (count($this->options) == 0 && count($this->commands) == 0) {
 			$this->newline();
@@ -274,7 +274,7 @@ class CLIA {
 	}
 
 	public function cmd_version() {
-		$this->println($this->getAppName() . ' CLI v' . $this->getAppVersion());
+		$this->println(static::$APP_NAME . ' CLI v' . static::$APP_VERSION);
 	}
 
 	/**
@@ -371,24 +371,6 @@ class CLIA {
 		}
 
 		return false;
-	}
-
-	/**
-	 * You should override this method in your own application.
-	 *
-	 * @return string
-	 */
-	public function getAppName() {
-		return self::APP_NAME;
-	}
-
-	/**
-	 * You should override this method in your own application.
-	 *
-	 * @return string
-	 */
-	public function getAppVersion() {
-		return self::APP_VERSION;
 	}
 
 	/**

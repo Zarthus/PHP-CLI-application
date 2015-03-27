@@ -1,8 +1,8 @@
 <?php
 
 class SomeCLI extends CLIA {
-	const APP_NAME = 'Example Application';
-	const APP_VERSION = '0.1';
+	public static $APP_NAME = 'Example Application';
+	public static $APP_VERSION = '0.1';
 
 	/**
 	 * @param bool $register_initial when turned on the default commands are not registered.
@@ -23,21 +23,5 @@ class SomeCLI extends CLIA {
 	 */
 	public function cmd_printone() {
 		$this->println("one");
-	}
-	
-	/**
-	 * Override getAppname and getAppVersion so the proper name/versions are displayed.
-	 *
-	 * @return string
-	 */
-	public function getAppName() {
-		return self::APP_NAME;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getAppVersion() {
-		return self::APP_VERSION;
 	}
 }
