@@ -525,7 +525,7 @@ class CLIA {
 			return false;
 		}
 
-		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' < ' . $file;
+		$command = 'mysql -h' . $this->db_host . ' -u' . $this->db_user . ' -p' . $this->db_pass . ' -D' . $this->db_name . ' < ' . $file;
 		exec($command, $output, $return);
 
 		if ($this->verbose) {
